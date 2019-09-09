@@ -6,7 +6,7 @@ import { TimerContext, hourInMs, minuteInMs } from '~/timer';
 
 const DisplayContainer = styled.div`
   color: ${lightBlue};
-  display: ${props => props.display ? 'flex' : 'none'};
+  display: ${props => props.displayOn ? 'flex' : 'none'};
   font-family: 'DS-DIGI';
   justify-content: space-between;
   align-items: center;
@@ -46,7 +46,7 @@ export const Display = (props: any) => {
   const timeScale = context.timeScale === minuteInMs ? 'min' : 'hrs';
 
   return (
-    <DisplayContainer display={props.displayOn}>
+    <DisplayContainer displayOn={props.displayOn}>
        <ClockIcon src={Clock} /> 
        <TimeLeft>
          <strong>

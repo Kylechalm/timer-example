@@ -20,9 +20,7 @@ export const StepControl = (props: any) => {
   const handleClick = (actionType) => {
     context.updateTimer({
       type: actionType,
-      payload: {
-        timeScale: context.timeScale,
-      }
+      payload: context,
     })
   }
   

@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { Display } from './display';
 import { Button, GlobalStyle } from '~/assets/stylevars';
-import { StepControl } from './controls/step-control';
+import { StepControl, RangeControl } from './controls';
 
 export const minuteInMs = 60 * 1000;
 export const hourInMs = minuteInMs * 60;
@@ -16,21 +16,21 @@ interface Timer {
 type TimeScale = 60000 | 3600000;
 
 const timerReducer = (timer, action) => {
-  console.log(timer, action);
-
+  const maxDuration = action.payload.maxDuration;
+  
   switch(action.type) {
     case 'increment':
-      const increment = action.payload.timeScale;
+      const increment = timer.duration + action.payload.timeScale;
 
       return {
-        duration: timer.duration + increment,
+        duration: increment > maxDuration ? maxDuration : increment,
         start: new Date(),
       }
     case 'decrement':
-      const decrement = action.payload.timeScale;
-
+      const decrement = timer.duration - action.payload.timeScale;
+      
       return {
-        duration: timer.duration - decrement,
+        duration: decrement < 0 ? 0 : decrement,
         start: new Date(),
       }
     case 'set':
@@ -45,11 +45,12 @@ const timerReducer = (timer, action) => {
 
 const TimerContainer = styled.div`
   align-items: center;
+  box-shadow: 5px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  height: 175px;
-  width: 300px;
+  height: 200px;
+  width: 450px;
 `;
 
 const initTimer = {
@@ -61,7 +62,13 @@ export const TimerContext = React.createContext({
   timer: initTimer,
   timeScale: minuteInMs,
   updateTimer: undefined,
+  maxDuration: undefined,
 });
+
+interface TimerProps {
+  maxDuration: number;
+  callback?: Function;
+}
 
 export const Timer = (props: any) => {
   const [displayOn, setDisplayOn] = React.useState(false);
@@ -84,13 +91,14 @@ export const Timer = (props: any) => {
   return (
     <TimerContainer>
       <GlobalStyle />
-      <TimerContext.Provider value={{timer, timeScale, updateTimer: dispatch}}>
+      <TimerContext.Provider value={{timer, timeScale, updateTimer: dispatch, maxDuration: props.maxDuration}}>
         <Display 
           displayOn={displayOn}
         />
         <StepControl />
         <h1 onClick={() => toggleTimeScale()}>{timeScale}</h1>
         <Button onClick={() => toggleDisplay()}>PWR</Button>
+        <RangeControl maxDuration={props.maxDuration} />
       </TimerContext.Provider>
     </TimerContainer>
   )
