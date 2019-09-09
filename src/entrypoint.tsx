@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { render } from 'react-dom'
-import { Timer, hourInMs } from '~/timer'
+import { Timer } from '~/timer'
+import { hourInMs } from '~/timer/utils';
 
 const maxDuration = hourInMs * 72;
 

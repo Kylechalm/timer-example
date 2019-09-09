@@ -44,7 +44,7 @@ export const RangeControl = (props: any) => {
         type: 'set',
         payload: {
           duration: targetValue,
-          maxDuration: context.maxDuration,
+          ...context,
         }
       });
     }

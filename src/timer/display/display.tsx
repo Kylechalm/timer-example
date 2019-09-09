@@ -2,7 +2,9 @@ import * as React from 'react';
 import styled from 'styled-components';
 import Clock from '~/assets/icons/clock.svg'; 
 import { lightBlue } from '~/assets/stylevars';
-import { TimerContext, hourInMs, minuteInMs } from '~/timer';
+import { TimerContext } from '~/timer';
+import { hourInMs, minuteInMs } from '~/timer/utils';
+import { timeLeft } from '~/timer/utils';
 
 const DisplayContainer = styled.div`
   color: ${lightBlue};
@@ -26,31 +28,33 @@ const TimeLeft = styled.p`
   } 
 `;
 
-const msToMinutes = (ms: number) => Math.round(ms / (60 * 1000));
-const msToHours = (ms: number) => Math.round(ms / ((60 * 60) * 1000));
-
-const timeLeft = (timer, timeScale) => {
-  const timeLeftInMs = timer.duration - (Date.now() - timer.start.getTime());
-
-  if (Math.sign(timeLeftInMs) === -1) return 0;
-  
-  if (timeScale === minuteInMs) {
-    return msToMinutes(timeLeftInMs);
-  } else {
-    return msToHours(timeLeftInMs);
-  }
-}
-
 export const Display = (props: any) => {
   const context = React.useContext(TimerContext);
+  const [displayTime, setDisplayTime] = React.useState(timeLeft(context.timer, context.timeScale));
+  const [updateDisplay, setUpdateDisplay] = React.useState(undefined);
   const timeScale = context.timeScale === minuteInMs ? 'min' : 'hrs';
 
+  React.useEffect(() => {
+    clearInterval(updateDisplay);
+    setDisplayTime(timeLeft(context.timer, context.timeScale));
+
+    setUpdateDisplay(
+      setInterval(() => {
+        setDisplayTime(timeLeft(context.timer, context.timeScale))
+      }, 1000)
+    )
+
+    return () => {
+      clearInterval(updateDisplay);
+    }
+  }, [context])
+  
   return (
     <DisplayContainer displayOn={props.displayOn}>
        <ClockIcon src={Clock} /> 
        <TimeLeft>
          <strong>
-           {timeLeft(context.timer, context.timeScale)}
+           {displayTime}
          </strong>{timeScale}
        </TimeLeft>
     </DisplayContainer>

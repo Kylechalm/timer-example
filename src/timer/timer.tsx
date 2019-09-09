@@ -3,9 +3,7 @@ import styled from 'styled-components';
 import { Display } from './display';
 import { Button, GlobalStyle } from '~/assets/stylevars';
 import { StepControl, RangeControl } from './controls';
-
-export const minuteInMs = 60 * 1000;
-export const hourInMs = minuteInMs * 60;
+import { minuteInMs, hourInMs, timeLeft } from './utils';
 
 interface Timer {
   duration: number;
@@ -16,27 +14,37 @@ interface Timer {
 type TimeScale = 60000 | 3600000;
 
 const timerReducer = (timer, action) => {
+  clearTimeout(timer.timeout);
+  let newDuration;
   const maxDuration = action.payload.maxDuration;
+  const durationLeft = timeLeft(timer, 1);
   
   switch(action.type) {
     case 'increment':
-      const increment = timer.duration + action.payload.timeScale;
+      const increment = durationLeft + action.payload.timeScale;
+
+      newDuration = increment > maxDuration ? maxDuration : increment;
 
       return {
-        duration: increment > maxDuration ? maxDuration : increment,
+        duration: newDuration,
         start: new Date(),
+        timeout: setTimeout(() => action.payload.callback(), newDuration),
       }
     case 'decrement':
-      const decrement = timer.duration - action.payload.timeScale;
+      const decrement = durationLeft - action.payload.timeScale;
       
+      newDuration = decrement < 0 ? 0 : decrement;
+
       return {
-        duration: decrement < 0 ? 0 : decrement,
+        duration: newDuration,
         start: new Date(),
+        timeout: setTimeout(() => action.payload.callback(), newDuration),
       }
     case 'set':
       return {
         duration: action.payload.duration,
         start: new Date(),
+        timeout: setTimeout(() => action.payload.callback(), action.payload.duration),
       }
     default:
       throw new Error('What did you do?');
@@ -56,6 +64,7 @@ const TimerContainer = styled.div`
 const initTimer = {
   duration: 0,
   start: new Date(),
+  timeout: undefined,
 }
 
 export const TimerContext = React.createContext({
@@ -63,6 +72,7 @@ export const TimerContext = React.createContext({
   timeScale: minuteInMs,
   updateTimer: undefined,
   maxDuration: undefined,
+  callback: undefined,
 });
 
 interface TimerProps {
@@ -87,11 +97,10 @@ export const Timer = (props: any) => {
     setDisplayOn(!displayOn);
   }
 
-
   return (
     <TimerContainer>
       <GlobalStyle />
-      <TimerContext.Provider value={{timer, timeScale, updateTimer: dispatch, maxDuration: props.maxDuration}}>
+      <TimerContext.Provider value={{timer, timeScale, updateTimer: dispatch, ...props}}>
         <Display 
           displayOn={displayOn}
         />
