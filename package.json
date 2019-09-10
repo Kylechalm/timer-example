@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "array.prototype.fill": "^1.0.2",
     "react": "^16.6.3",
     "react-dom": "^16.4.2",
     "styled-components": "^4.3.2"
@@ -13,7 +14,7 @@
     "typescript": "^3.0.1"
   },
   "scripts": {
-    "build": "$(npm bin)/parcel build ./src/index.html",
-    "start": "$(npm bin)/tsc --noEmit --watch & $(npm bin)/parcel ./src/index.html"
+    "build": "parcel build ./src/index.html",
+    "start": "parcel ./src/index.html"
   }
 }
