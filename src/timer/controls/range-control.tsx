@@ -122,7 +122,7 @@ const TickMarkContainer = styled.ul`
   margin: 0;
   padding: 0;
   position: relative;
-  left: 3px;
+  left: 4px;
 
   _:-ms-fullscreen,
   & {
@@ -146,7 +146,9 @@ for (let index = 0; index < 56; index++) {
   tickMarks[index] = <li key={index} />;
 }
 
-export const RangeControl = (props: any) => {
+interface RangeControlProps {}
+
+export const RangeControl = (props: RangeControlProps) => {
   const context = React.useContext(TimerContext);
   const [rangeValue, setRangeValue] = React.useState(context.timer.duration);
 
@@ -171,7 +173,7 @@ export const RangeControl = (props: any) => {
         type="range"
         onChange={handleChange}
         value={rangeValue}
-        max={props.maxDuration}
+        max={context.maxDuration}
       />
       <TickMarkContainer>{tickMarks}</TickMarkContainer>
     </RangeControlContainer>

@@ -75,7 +75,11 @@ const TimeLeft = styled.p`
   }
 `;
 
-export const Display = (props: any) => {
+interface DisplayProps {
+  displayOn: boolean;
+}
+
+export const Display = (props: DisplayProps) => {
   const context = React.useContext(TimerContext);
   const [displayTime, setDisplayTime] = React.useState(
     timeLeft(context.timer, context.timeScale)

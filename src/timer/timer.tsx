@@ -164,7 +164,7 @@ interface TimerProps {
   callback?: Function;
 }
 
-export const Timer = (props: any) => {
+export const Timer = (props: TimerProps) => {
   const [displayOn, setDisplayOn] = React.useState(false);
   const [timeScale, setTimeScale] = React.useState(minuteInMs);
   const [timer, dispatch] = React.useReducer(timerReducer, initTimer);
@@ -201,7 +201,7 @@ export const Timer = (props: any) => {
           >
             <ToggleCircle />
           </TimeScaleToggle>
-          <RangeControl maxDuration={props.maxDuration} />
+          <RangeControl />
         </BottomControlContianer>
       </TimerContext.Provider>
     </TimerContainer>

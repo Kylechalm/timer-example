@@ -22,7 +22,9 @@ const ButtonLabel = styled.img`
   padding: 2px;
 `;
 
-export const StepControl = (props: any) => {
+interface StepControlProps {}
+
+export const StepControl = (props: StepControlProps) => {
   const context = React.useContext(TimerContext);
 
   const handleClick = actionType => {
